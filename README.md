@@ -16,6 +16,7 @@ templates/
   profilePage.html         Personal profile page with name, photo placeholder and links (easiest start)
   quiz.html                Working multiple-choice quiz with 3 example questions in an array
   clickGame.html           Browser game "catch the block" with speed, score and lives as variables
+resources.md               Useful websites: documentation, CSS guides, colour and font tools, debugging help
 ```
 
 Every template is a single HTML file with CSS and JS inside. No build step, no install, no account.
@@ -29,6 +30,8 @@ Save it, double-click it, it works. Edit in VS Code or Notepad, press F5 to refr
 4. At the bottom of every template there is a list of easy extensions for when you want to go further.
 
 Broke something? Ctrl-Z exists. Or download the template again.
+
+Stuck or want to look something up? Open [resources.md](resources.md). It lists the sites we use ourselves: MDN for reference, CSS-Tricks for layout, Coolors and Google Fonts for looks, and how to read an error in the browser console.
 
 ## Live reload (optional)
 
