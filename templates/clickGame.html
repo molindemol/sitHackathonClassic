@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- CHANGE THIS: the title in the browser tab -->
+  <title>Catch the block</title>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap">
+
+  <style>
+    /* ============================================
+       COLOURS: change these values and press F5
+       ============================================ */
+    :root {
+      --background: #0e1a12;
+      --field: #16261c;
+      --text: #e7f2ea;
+      --text-soft: #8fb29c;
+      --block: #86efac;       /* the block you have to catch */
+      --border: #2c4636;
+    }
+
+    body {
+      background: var(--background);
+      color: var(--text);
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px;
+    }
+    h1 { font-size: 26px; margin: 0 0 4px; }
+    .instructions { color: var(--text-soft); margin: 0 0 16px; font-size: 14px; }
+
+    .scorebar {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+    .scorebar b { color: var(--block); }
+
+    /* The playing field */
+    #field {
+      position: relative;
+      width: min(92vw, 520px);
+      height: 380px;
+      background: var(--field);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    /* The block itself */
+    #block {
+      position: absolute;
+      background: var(--block);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* The start and game over screen inside the field */
+    #overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.55);
+      text-align: center;
+      padding: 16px;
+    }
+    #overlay button {
+      background: var(--block);
+      color: var(--background);
+      border: none;
+      border-radius: 8px;
+      padding: 12px 28px;
+      font: inherit;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #overlay button:hover { opacity: 0.85; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <!-- CHANGE THIS: the name of your game -->
+  <h1>Catch the block</h1>
+  <p class="instructions">Click the block before it jumps away. Miss it and you lose a life.</p>
+
+  <div class="scorebar">
+    <span>Score: <b id="scoreText">0</b></span>
+    <span>Lives: <b id="livesText">3</b></span>
+  </div>
+
+  <div id="field">
+    <div id="block" hidden></div>
+    <div id="overlay">
+      <p id="overlayText">Ready to start?</p>
+      <button id="startButton">Start</button>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================
+       STEP 1: THE KNOBS TO TURN
+       Change a number, press F5, and feel the
+       difference. This is game balancing.
+       ============================================ */
+    const START_LIVES = 3;         // how many lives you have
+    const START_TIME = 1500;       // ms the block stays put (1500 = 1.5 seconds)
+    const MINIMUM_TIME = 500;      // it never gets faster than this
+    const SPEEDUP = 40;            // this many ms faster after every catch
+    const BLOCK_SIZE = 46;         // size of the block in pixels
+
+    /* ============================================
+       Below is the engine of the game.
+       You do not have to change it, but you may.
+       Ideas are at the bottom under extensions.
+       ============================================ */
+    const field = document.getElementById("field");
+    const block = document.getElementById("block");
+    const overlay = document.getElementById("overlay");
+    const overlayText = document.getElementById("overlayText");
+    const scoreText = document.getElementById("scoreText");
+    const livesText = document.getElementById("livesText");
+
+    let score = 0;
+    let lives = START_LIVES;
+    let timePerBlock = START_TIME;
+    let jumpTimer = null;
+    let playing = false;
+
+    block.style.width = BLOCK_SIZE + "px";
+    block.style.height = BLOCK_SIZE + "px";
+
+    function showBlock() {
+      // put the block on a random spot in the field
+      const maxX = field.clientWidth - BLOCK_SIZE;
+      const maxY = field.clientHeight - BLOCK_SIZE;
+      block.style.left = Math.random() * maxX + "px";
+      block.style.top = Math.random() * maxY + "px";
+      block.hidden = false;
+
+      // too slow? that counts as a miss
+      clearTimeout(jumpTimer);
+      jumpTimer = setTimeout(missed, timePerBlock);
+    }
+
+    function caught(click) {
+      click.stopPropagation();   // otherwise the click also counts as a miss on the field
+      if (!playing) return;
+      score = score + 1;
+      scoreText.textContent = score;
+
+      // every catch makes the game a bit faster
+      timePerBlock = Math.max(MINIMUM_TIME, timePerBlock - SPEEDUP);
+      showBlock();
+    }
+
+    function missed() {
+      if (!playing) return;
+      lives = lives - 1;
+      livesText.textContent = lives;
+      if (lives <= 0) {
+        gameOver();
+      } else {
+        showBlock();
+      }
+    }
+
+    function gameOver() {
+      playing = false;
+      clearTimeout(jumpTimer);
+      block.hidden = true;
+      overlayText.textContent = "Game over. Score: " + score;
+      overlay.hidden = false;
+    }
+
+    function start() {
+      score = 0;
+      lives = START_LIVES;
+      timePerBlock = START_TIME;
+      scoreText.textContent = score;
+      livesText.textContent = lives;
+      overlay.hidden = true;
+      playing = true;
+      showBlock();
+    }
+
+    block.onclick = caught;
+    field.onclick = function () { if (playing) missed(); };  // clicking next to the block is a miss
+    document.getElementById("startButton").onclick = function (click) {
+      click.stopPropagation();   // otherwise the start click itself counts as a miss
+      start();
+    };
+  </script>
+
+  <!-- ============================================
+       EASY EXTENSIONS (pick one)
+
+       1. Make it your game: other colours in COLOURS,
+          other texts, another name.
+       2. Balancing: make the game meaner or kinder
+          with the numbers in STEP 1.
+       3. Shrinking block: turn BLOCK_SIZE into a
+          let variable and take 1 pixel off in caught()
+          every time (do not forget to set width/height again).
+       4. High score that survives F5. Search tip:
+          "javascript localStorage".
+       5. Decoy block: sometimes a second block in a
+          different colour that you must NOT click.
+       ============================================ -->
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- CHANGE THIS: the title in the browser tab -->
+  <title>Thijmen Walter</title>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap">
+
+  <style>
+    /* ============================================
+       STEP 1: COLOURS
+       Change these values and press F5.
+       Need a colour? Search online for "color picker".
+       ============================================ */
+    :root {
+      --background: #101418;
+      --card: #1a2129;
+      --text: #e8edf2;
+      --text-soft: #93a3b5;
+      --accent: #ffb454;        /* the eye-catching colour of the page */
+    }
+
+    body {
+      background: var(--background);
+      color: var(--text);
+      font-family: 'Sora', Verdana, sans-serif;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .page {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+
+    /* The round circle with initials at the top.
+       Got a real photo? See extension 1 at the bottom of this file. */
+    .avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--background);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: 800;
+    }
+
+    h1 {
+      font-size: 40px;
+      font-weight: 800;
+      margin: 20px 0 4px;
+    }
+
+    .subtitle {
+      color: var(--accent);
+      font-weight: 600;
+      margin: 0 0 16px;
+    }
+
+    .bio { color: var(--text-soft); }
+
+    h2 {
+      font-size: 20px;
+      margin: 40px 0 12px;
+    }
+
+    /* The cards under "About me" */
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .card strong { display: block; margin-bottom: 4px; }
+    .card span { color: var(--text-soft); font-size: 15px; }
+
+    /* The link buttons at the bottom */
+    .links a {
+      display: block;
+      background: var(--card);
+      color: var(--text);
+      text-decoration: none;
+      padding: 14px 18px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border-left: 4px solid var(--accent);
+    }
+    .links a:hover { background: var(--accent); color: var(--background); }
+
+    @media (max-width: 480px) {
+      .cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- ============================================
+         STEP 2: WHO ARE YOU
+         Replace the example text with your own info.
+         ============================================ -->
+
+    <!-- CHANGE THIS: your initials -->
+    <div class="avatar">TW</div>
+
+    <!-- CHANGE THIS: your name -->
+    <h1>Thijmen Walter</h1>
+
+    <!-- CHANGE THIS: what you do or want to become -->
+    <p class="subtitle">HBO-ICT student and software engineer</p>
+
+    <!-- CHANGE THIS: 2 or 3 sentences about yourself -->
+    <p class="bio">
+      HBO-ICT student in Amsterdam and part of the SIT crew.
+      Today I am helping you build your very first web page,
+      at the SIT Introweek Hackathon.
+    </p>
+
+    <!-- ============================================
+         STEP 3: THE CARDS
+         Copy a block from <div class="card"> to
+         </div> to add another card.
+         ============================================ -->
+    <h2>About me</h2>
+    <div class="cards">
+      <div class="card">
+        <strong>Hobby</strong>
+        <span>Gaming and running Minecraft servers</span>
+      </div>
+      <div class="card">
+        <strong>Favourite game</strong>
+        <span>Minecraft</span>
+      </div>
+      <div class="card">
+        <strong>Working on</strong>
+        <span>A habit tracker in Next.js</span>
+      </div>
+      <div class="card">
+        <strong>Team</strong>
+        <span>SIT crew</span>
+      </div>
+    </div>
+
+    <!-- ============================================
+         STEP 4: YOUR LINKS
+         Put the destination of each button inside href="".
+         ============================================ -->
+    <h2>Find me here</h2>
+    <div class="links">
+      <a href="https://svsit.nl">SIT, my study association</a>
+      <a href="https://github.com/molindemol">My GitHub</a>
+      <a href="mailto:thijmen.walter@svsit.nl">Send me an email</a>
+    </div>
+
+  </div>
+
+  <!-- ============================================
+       EASY EXTENSIONS (pick one)
+
+       1. Real photo: replace <div class="avatar">TW</div>
+          with <img class="avatar" src="myphoto.jpg">
+          and put the photo next to this file in the same folder.
+       2. More cards: copy a card block.
+       3. Dark or light: flip the colours in STEP 1
+          (light background, dark text).
+       4. Add a second page: make a copy of this file
+          (for example projects.html) and link to it with
+          <a href="projects.html">My projects</a>
+       5. For your teammates: everyone gets their own page,
+          then link them together. There is your team site.
+       ============================================ -->
+</body>
+</html>

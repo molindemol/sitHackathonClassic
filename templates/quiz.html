@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- CHANGE THIS: the title in the browser tab -->
+  <title>The Great Introweek Quiz</title>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap">
+
+  <style>
+    /* ============================================
+       COLOURS: change these values and press F5
+       ============================================ */
+    :root {
+      --background: #14121f;
+      --card: #201d33;
+      --text: #eeecf6;
+      --text-soft: #a09ac0;
+      --accent: #5eead4;      /* buttons and score */
+      --correct: #4ade80;     /* colour for a correct answer */
+      --wrong: #f87171;       /* colour for a wrong answer */
+    }
+
+    body {
+      background: var(--background);
+      color: var(--text);
+      font-family: 'IBM Plex Sans', Verdana, sans-serif;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+    .quiz {
+      width: 100%;
+      max-width: 560px;
+    }
+    h1 { font-size: 30px; margin: 0 0 4px; }
+    .progress { color: var(--text-soft); margin: 0 0 24px; }
+
+    .question-card {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 24px;
+    }
+    .question-text { font-size: 20px; font-weight: 600; margin: 0 0 20px; }
+
+    /* The answer buttons */
+    .answer {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: var(--background);
+      color: var(--text);
+      border: 2px solid transparent;
+      border-radius: 8px;
+      padding: 13px 16px;
+      margin-bottom: 10px;
+      font: inherit;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .answer:hover { border-color: var(--accent); }
+    .answer.correct { border-color: var(--correct); }
+    .answer.wrong { border-color: var(--wrong); }
+
+    .next {
+      background: var(--accent);
+      color: var(--background);
+      border: none;
+      border-radius: 8px;
+      padding: 13px 24px;
+      font: inherit;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .next:hover { opacity: 0.85; }
+
+    .final-score { font-size: 44px; font-weight: 700; color: var(--accent); margin: 8px 0; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="quiz">
+    <!-- CHANGE THIS: the name of your quiz -->
+    <h1>The Great Introweek Quiz</h1>
+    <p class="progress" id="progress"></p>
+
+    <div class="question-card" id="questionCard">
+      <p class="question-text" id="questionText"></p>
+      <div id="answers"></div>
+      <button class="next" id="nextButton" hidden>Next question</button>
+    </div>
+
+    <div class="question-card" id="endCard" hidden>
+      <p class="question-text">Done!</p>
+      <p class="final-score" id="finalScore"></p>
+      <p id="endText"></p>
+      <button class="next" id="restartButton">Play again</button>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================
+       STEP 1: YOUR QUESTIONS
+       Every question has:
+       - question: the text
+       - answers: a list of options
+       - correct: the NUMBER of the right answer.
+         Careful: counting starts at 0. So 0 is the
+         first option, 1 the second, 2 the third.
+       Copy a { ... } block to add a question.
+       Do not forget the comma in between.
+       ============================================ */
+    const questions = [
+      {
+        question: "What does HTML stand for?",
+        answers: [
+          "HyperText Markup Language",
+          "High Tech Modern Laptop",
+          "How To Make Lasagna"
+        ],
+        correct: 0
+      },
+      {
+        question: "What does a year of SIT membership cost?",
+        answers: ["99.99 euro", "9.99 euro", "Free"],
+        correct: 1
+      },
+      {
+        question: "Which key refreshes the page in your browser?",
+        answers: ["F5", "Escape", "Caps Lock"],
+        correct: 0
+      }
+    ];
+
+    /* ============================================
+       STEP 2: THE TEXT ON THE END SCREEN
+       ============================================ */
+    function endMessage(score, total) {
+      if (score === total) return "Perfect. You get to write the next quiz.";
+      if (score >= total / 2) return "Nice, more right than wrong.";
+      return "Ouch. Luckily taking part counts too.";
+    }
+
+    /* ============================================
+       Below is the engine of the quiz.
+       You do not have to change it, but you may.
+       Read the extensions at the bottom for ideas.
+       ============================================ */
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionText = document.getElementById("questionText");
+    const answersBox = document.getElementById("answers");
+    const progress = document.getElementById("progress");
+    const nextButton = document.getElementById("nextButton");
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      progress.textContent = "Question " + (currentQuestion + 1) + " of " + questions.length + " | Score: " + score;
+      questionText.textContent = q.question;
+      answersBox.innerHTML = "";
+      nextButton.hidden = true;
+
+      q.answers.forEach(function (text, number) {
+        const button = document.createElement("button");
+        button.className = "answer";
+        button.textContent = text;
+        button.onclick = function () { choose(number, button); };
+        answersBox.appendChild(button);
+      });
+    }
+
+    function choose(number, button) {
+      const q = questions[currentQuestion];
+      const allButtons = answersBox.querySelectorAll(".answer");
+      allButtons.forEach(function (b) { b.disabled = true; });
+
+      if (number === q.correct) {
+        button.classList.add("correct");
+        score = score + 1;
+      } else {
+        button.classList.add("wrong");
+        allButtons[q.correct].classList.add("correct");
+      }
+      progress.textContent = "Question " + (currentQuestion + 1) + " of " + questions.length + " | Score: " + score;
+      nextButton.hidden = false;
+    }
+
+    nextButton.onclick = function () {
+      currentQuestion = currentQuestion + 1;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        document.getElementById("questionCard").hidden = true;
+        document.getElementById("endCard").hidden = false;
+        document.getElementById("finalScore").textContent = score + " / " + questions.length;
+        document.getElementById("endText").textContent = endMessage(score, questions.length);
+      }
+    };
+
+    document.getElementById("restartButton").onclick = function () {
+      currentQuestion = 0;
+      score = 0;
+      document.getElementById("endCard").hidden = true;
+      document.getElementById("questionCard").hidden = false;
+      showQuestion();
+    };
+
+    showQuestion();
+  </script>
+
+  <!-- ============================================
+       EASY EXTENSIONS (pick one)
+
+       1. More questions: copy a question block in STEP 1.
+          Make it a quiz about your class.
+       2. Four answers: just add a fourth option
+          to the answers list.
+       3. Timer: give 10 seconds per question. Search tip:
+          "javascript setInterval countdown".
+       4. High score that survives F5. Search tip:
+          "javascript localStorage".
+       5. A sound on correct or wrong. Search tip:
+          "javascript play sound on click".
+       ============================================ -->
+</body>
+</html>
